@@ -1,0 +1,29 @@
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix exShape: <http://example.com/exShape#> .
+@prefix exOnt:   <http://example.com/exOnt#> .
+
+<http://example.com/exShape>
+    a          owl:Ontology ;
+    rdfs:label "Example Shapes File"@en .
+
+exShape:HumanShape
+    a              sh:NodeShape ;
+    sh:property    [ sh:class exOnt:Pet ;
+                     sh:path  exOnt:hasPet ; ] ;
+    sh:property    [ sh:datatype     xsd:integer ;
+                     sh:path         exOnt:nLegs ;
+                     sh:maxInclusive 2 ;
+                     sh:minInclusive 2 ; ] ;
+    sh:targetClass exOnt:Human .
+
+exShape:AnimalShape
+    a              sh:NodeShape ;
+    sh:property    [ sh:datatype     xsd:integer ;
+                     sh:path         exOnt:nLegs ;
+                     sh:maxInclusive 4 ;
+                     sh:minInclusive 1 ; ] ;
+    sh:targetClass exOnt:Animal .

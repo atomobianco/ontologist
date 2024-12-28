@@ -4,20 +4,22 @@ version = "0.0.1"
 description = "A Python library for validating RDF data alignment with ontologies without requiring SHACL definitions."
 authors = ["Tommaso Bianco <tommaso.bianco@gmail.com>"]
 repository = "https://github.com/atomobianco/ontologist"
-documentation = "https://atomobianco.github.io/ontologist/"
 readme = "README.md"
 packages = [
   {include = "ontologist"}
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<4.0"
+python = ">=3.9,<4.0"
+rdflib = "^7.0.0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.2.0"
-deptry = "^0.16.2"
+pytest = "^8.3.4"
+pytest-cov = "^6.0.0"
+deptry = "^0.21.2"
 mypy = "^1.5.1"
-pre-commit = "^3.4.0"
+pre-commit = "^4.0.1"
+pyshacl = "^0.29.0"
 tox = "^4.11.1"
 
 
@@ -87,7 +89,12 @@ ignore = [
 [tool.ruff.format]
 preview = true
 
+[tool.coverage.report]
+skip_empty = true
 
+[tool.coverage.run]
+branch = true
+source = ["ontologist"]
 
 [tool.ruff.per-file-ignores]
 "tests/*" = ["S101"]
