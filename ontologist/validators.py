@@ -61,35 +61,39 @@ def validate_undefined_property(data_graph: Graph, ont_graph: Graph) -> set[Viol
     return violations
 
 
+def _get_all_classes_with_superclasses(instance: URIRef, data_graph: Graph, ont_graph: Graph) -> set[URIRef]:
+    classes: set[URIRef] = set()
+    for cls in data_graph.objects(subject=instance, predicate=RDF.type):
+        if isinstance(cls, URIRef):
+            classes.add(cls)
+            superclasses = get_superclasses(cls, ont_graph)
+            classes.update(sc for sc in superclasses if isinstance(sc, URIRef))
+    return classes
+
+
 def validate_object_property_domain(data_graph: Graph, ont_graph: Graph) -> set[Violation]:
     relations_mapped_to_allowed_domains = get_object_properties_with_domains(ont_graph)
     violations: set[Violation] = set()
 
     for s, p, o in data_graph:
-        s_name = get_short_name(s, data_graph)
-        p_name = get_short_name(p, data_graph)
-        if isinstance(o, URIRef) and isinstance(s, URIRef) and isinstance(p, URIRef) and p != URIRef(RDF.type):
-            s_classes = set(data_graph.objects(subject=s, predicate=RDF.type))
-            for cls in list(s_classes):
-                s_classes.update(get_superclasses(cls, ont_graph))
+        if not (isinstance(o, URIRef) and isinstance(s, URIRef) and isinstance(p, URIRef) and p != RDF.type):
+            continue
 
-            o_classes = set(data_graph.objects(subject=o, predicate=RDF.type))
-            for cls in list(o_classes):
-                o_classes.update(get_superclasses(cls, ont_graph))
+        s_classes = _get_all_classes_with_superclasses(s, data_graph, ont_graph)
 
-            if p in relations_mapped_to_allowed_domains:
-                allowed_domain_classes = relations_mapped_to_allowed_domains[p]
-                if not allowed_domain_classes.intersection(s_classes):
-                    violations.add(
-                        PropertyDomainViolation(
-                            instance_id=s_name,
-                            property_name=p_name,
-                            invalid_type=", ".join([get_short_name(cls, data_graph) for cls in s_classes]),
-                            expected_type=", ".join([
-                                get_short_name(cls, data_graph) for cls in allowed_domain_classes
-                            ]),
-                        )
-                    )
+        if p not in relations_mapped_to_allowed_domains:
+            continue
+
+        allowed_domain_classes = relations_mapped_to_allowed_domains[p]
+        if not allowed_domain_classes.intersection(s_classes):
+            violations.add(
+                PropertyDomainViolation(
+                    instance_id=get_short_name(s, data_graph),
+                    property_name=get_short_name(p, data_graph),
+                    invalid_type=", ".join([get_short_name(cls, data_graph) for cls in s_classes]),
+                    expected_type=", ".join([get_short_name(cls, data_graph) for cls in allowed_domain_classes]),
+                )
+            )
 
     return violations
 
@@ -99,28 +103,24 @@ def validate_object_property_range(data_graph: Graph, ont_graph: Graph) -> set[V
     violations: set[Violation] = set()
 
     for s, p, o in data_graph:
-        p_name = get_short_name(p, data_graph)
-        o_name = get_short_name(o, data_graph)
-        if isinstance(o, URIRef) and isinstance(s, URIRef) and isinstance(p, URIRef) and p != URIRef(RDF.type):
-            s_classes = set(data_graph.objects(subject=s, predicate=RDF.type))
-            for cls in list(s_classes):
-                s_classes.update(get_superclasses(cls, ont_graph))
+        if not (isinstance(o, URIRef) and isinstance(s, URIRef) and isinstance(p, URIRef) and p != RDF.type):
+            continue
 
-            o_classes = set(data_graph.objects(subject=o, predicate=RDF.type))
-            for cls in list(o_classes):
-                o_classes.update(get_superclasses(cls, ont_graph))
+        o_classes = _get_all_classes_with_superclasses(o, data_graph, ont_graph)
 
-            if p in relations_mapped_to_allowed_ranges:
-                allowed_range_classes = relations_mapped_to_allowed_ranges[p]
-                if not allowed_range_classes.intersection(o_classes):
-                    violations.add(
-                        PropertyRangeViolation(
-                            instance_id=o_name,
-                            property_name=p_name,
-                            invalid_type=", ".join([get_short_name(cls, data_graph) for cls in o_classes]),
-                            expected_type=", ".join([get_short_name(cls, data_graph) for cls in allowed_range_classes]),
-                        )
-                    )
+        if p not in relations_mapped_to_allowed_ranges:
+            continue
+
+        allowed_range_classes = relations_mapped_to_allowed_ranges[p]
+        if not allowed_range_classes.intersection(o_classes):
+            violations.add(
+                PropertyRangeViolation(
+                    instance_id=get_short_name(o, data_graph),
+                    property_name=get_short_name(p, data_graph),
+                    invalid_type=", ".join([get_short_name(cls, data_graph) for cls in o_classes]),
+                    expected_type=", ".join([get_short_name(cls, data_graph) for cls in allowed_range_classes]),
+                )
+            )
 
     return violations
 
