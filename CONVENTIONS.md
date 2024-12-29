@@ -18,7 +18,7 @@ You can pretty much use the following 4 categories for everything: `feat`, `fix`
 - `refactor` is for changing code for performance or convenience purpose (e.g. readibility)
 - `chore` is for everything else (writing documentation, formatting, adding tests, cleaning useless code etc.)
 
-After the category, there should be a ":" announcing the commit description, which starts with a lowercase letter and does not end with a period.
+After the category, there should be a ":" announcing the commit description.
 
 # Code Development
 
