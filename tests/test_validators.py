@@ -18,12 +18,15 @@ def test_validate_successful():
     assert not violations, "Expected no violations"
 
 
-def test_validate_successful_although_property_constraint_violation():
+def test_validate_type_mismatch():
     d = Graph().parse(RESOURCE_DIR / "02-data.ttl", format="turtle")
     o = Graph().parse(RESOURCE_DIR / "02-ontology.ttl", format="turtle")
     conforms, violations, _ = validate(d, o)
-    assert conforms, "Expected conformity"
-    assert not violations, "Expected no violations"
+    assert not conforms, "Expected non conformity"
+    assert len(violations) == 1, "Expected 1 violation"
+    assert {violation.violation_type for violation in violations} == {
+        ViolationType.TYPE_MISMATCH
+    }, "Expected only type mismatch violations"
 
 
 def test_validate_undefined_class():
@@ -79,7 +82,7 @@ def _validate_with_pyshacl(data_graph: Graph, ont_graph: Graph, shape_graph: Gra
             "02-data.ttl",
             "02-ontology.ttl",
             "02-shape.ttl",
-            True,
+            False,
             False,
         ),
         (

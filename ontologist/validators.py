@@ -1,8 +1,9 @@
-from rdflib import RDF, Graph, URIRef
+from rdflib import RDF, RDFS, Graph, Literal, URIRef
 
 from ontologist.models import (
     PropertyDomainViolation,
     PropertyRangeViolation,
+    TypeMismatchViolation,
     UndefinedClassViolation,
     UndefinedPropertyViolation,
     Violation,
@@ -120,5 +121,29 @@ def validate_object_property_range(data_graph: Graph, ont_graph: Graph) -> set[V
                             expected_type=", ".join([get_short_name(cls, data_graph) for cls in allowed_range_classes]),
                         )
                     )
+
+    return violations
+
+
+def validate_type_compatibility(data_graph: Graph, ont_graph: Graph) -> set[Violation]:
+    violations: set[Violation] = set()
+
+    data_property_ranges = {}
+    for prop in get_data_properties(ont_graph):
+        ranges = set(ont_graph.objects(prop, RDFS.range))
+        if ranges:
+            data_property_ranges[prop] = ranges
+
+    for s, p, o in data_graph:
+        if isinstance(p, URIRef) and p in data_property_ranges:
+            expected_type = data_property_ranges[p]
+            if isinstance(o, Literal) and o.datatype not in expected_type:
+                violations.add(
+                    TypeMismatchViolation(
+                        instance_id=get_short_name(s, data_graph),
+                        invalid_type=str(o.datatype),
+                        expected_type=", ".join(str(t) for t in expected_type),
+                    )
+                )
 
     return violations
