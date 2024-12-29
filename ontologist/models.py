@@ -97,3 +97,18 @@ class PropertyRangeViolation(Violation):
 
     def __hash__(self) -> int:
         return super().__hash__()
+
+
+@dataclass
+class TypeMismatchViolation(Violation):
+    def __init__(self, instance_id: str, invalid_type: str, expected_type: str):
+        super().__init__(
+            instance_id=instance_id,
+            violation_type=ViolationType.TYPE_MISMATCH,
+            description=f"Instance '{instance_id}' is declared as type '{invalid_type}' but this violates the class hierarchy. Expected compatible type: '{expected_type}'.",
+            violating_value=invalid_type,
+            related_entities=[expected_type],
+        )
+
+    def __hash__(self) -> int:
+        return super().__hash__()

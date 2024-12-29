@@ -4,7 +4,7 @@ A git branch should start with a category. Pick one of these: `feature`, `bugfix
 
 - `feature` is for adding, refactoring or removing a feature
 - `fix` is for fixing a bug
-- `test` is for experimenting outside of an issue/ticket
+- `test` is for experimenting outside an issue/ticket
 
 After the category, there should be a "/" followed by a description which sums up the purpose of this specific branch. This description should be short and "kebab-cased".
 
@@ -15,10 +15,10 @@ You can pretty much use the following 4 categories for everything: `feat`, `fix`
 
 - `feat` is for adding a new feature
 - `fix` is for fixing a bug
-- `refactor` is for changing code for peformance or convenience purpose (e.g. readibility)
+- `refactor` is for changing code for performance or convenience purpose (e.g. readibility)
 - `chore` is for everything else (writing documentation, formatting, adding tests, cleaning useless code etc.)
 
-After the category, there should be a ":" announcing the commit description, which starts with a lowercase letter and does not end with a period.
+After the category, there should be a ":" announcing the commit description.
 
 # Code Development
 
