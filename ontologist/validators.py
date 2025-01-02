@@ -9,13 +9,13 @@ from ontologist.models import (
     Violation,
 )
 from ontologist.retrievers import (
+    get_all_classes_with_superclasses,
     get_classes_from_definitions,
     get_classes_from_instances,
     get_data_properties,
     get_object_properties,
     get_object_properties_with_domains,
     get_object_properties_with_ranges,
-    get_superclasses,
 )
 from ontologist.utils import get_short_name, is_annotation_property
 
@@ -71,16 +71,6 @@ def validate_undefined_property(data_graph: Graph, ont_graph: Graph) -> set[Viol
     return violations
 
 
-def _get_all_classes_with_superclasses(instance: URIRef, data_graph: Graph, ont_graph: Graph) -> set[URIRef]:
-    classes: set[URIRef] = set()
-    for cls in data_graph.objects(subject=instance, predicate=RDF.type):
-        if isinstance(cls, URIRef):
-            classes.add(cls)
-            superclasses = get_superclasses(cls, ont_graph)
-            classes.update(sc for sc in superclasses if isinstance(sc, URIRef))
-    return classes
-
-
 def validate_object_property_domain(data_graph: Graph, ont_graph: Graph) -> set[Violation]:
     relations_mapped_to_allowed_domains = get_object_properties_with_domains(ont_graph)
     violations: set[Violation] = set()
@@ -89,7 +79,7 @@ def validate_object_property_domain(data_graph: Graph, ont_graph: Graph) -> set[
         if not (isinstance(o, URIRef) and isinstance(s, URIRef) and isinstance(p, URIRef) and p != RDF.type):
             continue
 
-        s_classes = _get_all_classes_with_superclasses(s, data_graph, ont_graph)
+        s_classes = get_all_classes_with_superclasses(s, data_graph, ont_graph)
 
         if p not in relations_mapped_to_allowed_domains:
             continue
@@ -116,7 +106,7 @@ def validate_object_property_range(data_graph: Graph, ont_graph: Graph) -> set[V
         if not (isinstance(o, URIRef) and isinstance(s, URIRef) and isinstance(p, URIRef) and p != RDF.type):
             continue
 
-        o_classes = _get_all_classes_with_superclasses(o, data_graph, ont_graph)
+        o_classes = get_all_classes_with_superclasses(o, data_graph, ont_graph)
 
         if p not in relations_mapped_to_allowed_ranges:
             continue

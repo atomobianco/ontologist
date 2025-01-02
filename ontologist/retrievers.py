@@ -131,3 +131,13 @@ def get_superclasses(cls: Union[URIRef, Node], ontology: Graph) -> set[Union[URI
                 superclasses.add(superclass)
                 to_visit.append(superclass)
     return superclasses
+
+
+def get_all_classes_with_superclasses(instance: URIRef, data_graph: Graph, ont_graph: Graph) -> set[URIRef]:
+    classes: set[URIRef] = set()
+    for cls in data_graph.objects(subject=instance, predicate=RDF.type):
+        if isinstance(cls, URIRef):
+            classes.add(cls)
+            superclasses = get_superclasses(cls, ont_graph)
+            classes.update(sc for sc in superclasses if isinstance(sc, URIRef))
+    return classes
