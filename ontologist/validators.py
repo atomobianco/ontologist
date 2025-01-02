@@ -21,6 +21,16 @@ from ontologist.utils import get_short_name, is_annotation_property
 
 
 def validate_undefined_class(data_graph: Graph, ont_graph: Graph) -> set[Violation]:
+    """
+    Validate that all classes used in the data graph are defined in the ontology.
+
+    Args:
+        data_graph: Graph containing the data to validate
+        ont_graph: Graph containing the ontology definitions
+
+    Returns:
+        Set of violations for undefined classes
+    """
     ontology_classes = get_classes_from_definitions(ont_graph)
     graph_classes = get_classes_from_instances(data_graph)
 
