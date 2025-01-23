@@ -11,20 +11,13 @@ A Python library for validating RDF data alignment with ontologies without requi
 ## Why?
 
 When working with Large Language Models (LLMs) to extract RDF data based on ontologies, it's crucial to verify that the extracted data aligns correctly with the target ontology.
-While tools like [pySHACL](https://github.com/RDFLib/pySHACL) exist for RDF validation, they may require explicit shape definitions, or may fail on certain validation checks.
+While tools like [pySHACL](https://github.com/RDFLib/pySHACL) or [PyShEx](https://github.com/hsolbrig/PyShEx) exist for RDF validation, they may require additional shape resources, or may fail on certain validation checks.
 
 This library provides a programmatic approach to verify ontology alignment, making it particularly suitable for:
 
 - Validating LLM-extracted RDF data
-- Working with ontologies that lack SHACL definitions
+- Working with ontologies that lack shape definitions
 - Getting detailed violation reports for debugging and improvement
-
-## Features
-
-- Validate RDF data against ontology definitions without SHACL
-- Detect undefined classes and properties
-- Verify property domain and range constraints
-- Provide detailed violation reports
 
 ## Installation
 
