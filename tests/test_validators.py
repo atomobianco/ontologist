@@ -18,7 +18,7 @@ def test_validate_successful():
     assert not violations, "Expected no violations"
 
 
-def test_validate_type_mismatch():
+def test_validate_property_type():
     d = Graph().parse(RESOURCE_DIR / "02-data.ttl", format="turtle")
     o = Graph().parse(RESOURCE_DIR / "02-ontology.ttl", format="turtle")
     conforms, violations, report = validate(d, o)
@@ -28,7 +28,7 @@ def test_validate_type_mismatch():
     assert not conforms, "Expected non conformity"
     assert len(violations) == 1, "Expected 1 violation"
     assert {violation.violation_type for violation in violations} == {
-        ViolationType.TYPE_MISMATCH
+        ViolationType.PROPERTY_TYPE_VIOLATION
     }, "Expected only type mismatch violations"
 
 

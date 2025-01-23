@@ -6,7 +6,7 @@ from .models import (
 from .validators import (
     validate_object_property_domain,
     validate_object_property_range,
-    validate_type_compatibility,
+    validate_property_type,
     validate_undefined_class,
     validate_undefined_property,
 )
@@ -32,7 +32,7 @@ def validate(data_graph: Graph, ont_graph: Graph) -> tuple[bool, set[Violation],
         *validate_undefined_property(data_graph, ont_graph),
         *validate_object_property_domain(data_graph, ont_graph),
         *validate_object_property_range(data_graph, ont_graph),
-        *validate_type_compatibility(data_graph, ont_graph),
+        *validate_property_type(data_graph, ont_graph),
     }
 
     conforms = len(violations) == 0

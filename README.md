@@ -44,4 +44,15 @@ ontology = Graph().parse("your_ontology.ttl")
 
 # Validate the data
 is_valid, violations, report = validate(data, ontology)
+
+print(report)
+```
+
+```
+Validation Report
+Conforms: False
+Results (1):
+PROPERTY type violation:
+	Property 'ex:Prop1' of instance 'ex:Class1' can't have value of type 'http://www.w3.org/2001/XMLSchema#string' because it requires type 'http://www.w3.org/2001/XMLSchema#integer'.
+
 ```

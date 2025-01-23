@@ -18,7 +18,7 @@ class ViolationType(Enum):
     PROPERTY_RANGE_VIOLATION = "Property range violation"
     # When a property has a value outside its allowed range.
 
-    TYPE_MISMATCH = "Type mismatch violation"
+    PROPERTY_TYPE_VIOLATION = "PROPERTY type violation"
     # When a data property value's type (like string, integer) does not match the expected type.
 
     ## TODO: Handle more violations
