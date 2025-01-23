@@ -140,7 +140,7 @@ def validate_type_compatibility(data_graph: Graph, ont_graph: Graph) -> set[Viol
             if isinstance(o, Literal) and o.datatype not in expected_type:
                 violations.add(
                     TypeMismatchViolation(
-                        instance_id=get_short_name(s, data_graph),
+                        instance_id=f"{get_short_name(s, data_graph)}.{get_short_name(p, data_graph)}",
                         invalid_type=str(o.datatype),
                         expected_type=", ".join(str(t) for t in expected_type),
                     )

@@ -105,7 +105,7 @@ class TypeMismatchViolation(Violation):
         super().__init__(
             instance_id=instance_id,
             violation_type=ViolationType.TYPE_MISMATCH,
-            description=f"Instance '{instance_id}' can't have type '{invalid_type}', because it requires type '{expected_type}'.",
+            description=f"Property value '{instance_id}' can't have type '{invalid_type}', because it requires type '{expected_type}'.",
             violating_value=invalid_type,
             related_entities=[expected_type],
         )
