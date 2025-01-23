@@ -21,10 +21,7 @@ def test_validate_successful():
 def test_validate_property_type():
     d = Graph().parse(RESOURCE_DIR / "02-data.ttl", format="turtle")
     o = Graph().parse(RESOURCE_DIR / "02-ontology.ttl", format="turtle")
-    conforms, violations, report = validate(d, o)
-    print("---")
-    print(report)
-    print("---")
+    conforms, violations, _ = validate(d, o)
     assert not conforms, "Expected non conformity"
     assert len(violations) == 1, "Expected 1 violation"
     assert {violation.violation_type for violation in violations} == {
