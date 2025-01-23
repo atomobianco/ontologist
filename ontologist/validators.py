@@ -3,24 +3,34 @@ from rdflib import RDF, RDFS, Graph, Literal, URIRef
 from ontologist.models import (
     PropertyDomainViolation,
     PropertyRangeViolation,
-    TypeMismatchViolation,
+    PropertyTypeViolation,
     UndefinedClassViolation,
     UndefinedPropertyViolation,
     Violation,
 )
 from ontologist.retrievers import (
+    get_all_classes_with_superclasses,
     get_classes_from_definitions,
     get_classes_from_instances,
     get_data_properties,
     get_object_properties,
     get_object_properties_with_domains,
     get_object_properties_with_ranges,
-    get_superclasses,
 )
 from ontologist.utils import get_short_name, is_annotation_property
 
 
 def validate_undefined_class(data_graph: Graph, ont_graph: Graph) -> set[Violation]:
+    """
+    Validate that all classes used in the data graph are defined in the ontology.
+
+    Args:
+        data_graph: Graph containing the data to validate
+        ont_graph: Graph containing the ontology definitions
+
+    Returns:
+        Set of violations for undefined classes
+    """
     ontology_classes = get_classes_from_definitions(ont_graph)
     graph_classes = get_classes_from_instances(data_graph)
 
@@ -61,16 +71,6 @@ def validate_undefined_property(data_graph: Graph, ont_graph: Graph) -> set[Viol
     return violations
 
 
-def _get_all_classes_with_superclasses(instance: URIRef, data_graph: Graph, ont_graph: Graph) -> set[URIRef]:
-    classes: set[URIRef] = set()
-    for cls in data_graph.objects(subject=instance, predicate=RDF.type):
-        if isinstance(cls, URIRef):
-            classes.add(cls)
-            superclasses = get_superclasses(cls, ont_graph)
-            classes.update(sc for sc in superclasses if isinstance(sc, URIRef))
-    return classes
-
-
 def validate_object_property_domain(data_graph: Graph, ont_graph: Graph) -> set[Violation]:
     relations_mapped_to_allowed_domains = get_object_properties_with_domains(ont_graph)
     violations: set[Violation] = set()
@@ -79,7 +79,7 @@ def validate_object_property_domain(data_graph: Graph, ont_graph: Graph) -> set[
         if not (isinstance(o, URIRef) and isinstance(s, URIRef) and isinstance(p, URIRef) and p != RDF.type):
             continue
 
-        s_classes = _get_all_classes_with_superclasses(s, data_graph, ont_graph)
+        s_classes = get_all_classes_with_superclasses(s, data_graph, ont_graph)
 
         if p not in relations_mapped_to_allowed_domains:
             continue
@@ -106,7 +106,7 @@ def validate_object_property_range(data_graph: Graph, ont_graph: Graph) -> set[V
         if not (isinstance(o, URIRef) and isinstance(s, URIRef) and isinstance(p, URIRef) and p != RDF.type):
             continue
 
-        o_classes = _get_all_classes_with_superclasses(o, data_graph, ont_graph)
+        o_classes = get_all_classes_with_superclasses(o, data_graph, ont_graph)
 
         if p not in relations_mapped_to_allowed_ranges:
             continue
@@ -125,7 +125,7 @@ def validate_object_property_range(data_graph: Graph, ont_graph: Graph) -> set[V
     return violations
 
 
-def validate_type_compatibility(data_graph: Graph, ont_graph: Graph) -> set[Violation]:
+def validate_property_type(data_graph: Graph, ont_graph: Graph) -> set[Violation]:
     violations: set[Violation] = set()
 
     data_property_ranges = {}
@@ -139,10 +139,11 @@ def validate_type_compatibility(data_graph: Graph, ont_graph: Graph) -> set[Viol
             expected_type = data_property_ranges[p]
             if isinstance(o, Literal) and o.datatype not in expected_type:
                 violations.add(
-                    TypeMismatchViolation(
+                    PropertyTypeViolation(
                         instance_id=get_short_name(s, data_graph),
                         invalid_type=str(o.datatype),
                         expected_type=", ".join(str(t) for t in expected_type),
+                        related_property=get_short_name(p, data_graph),
                     )
                 )
 

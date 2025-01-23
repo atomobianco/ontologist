@@ -18,15 +18,15 @@ class ViolationType(Enum):
     PROPERTY_RANGE_VIOLATION = "Property range violation"
     # When a property has a value outside its allowed range.
 
+    PROPERTY_TYPE_VIOLATION = "PROPERTY type violation"
+    # When a data property value's type (like string, integer) does not match the expected type.
+
     ## TODO: Handle more violations
     CLASS_HIERARCHY = "Class hierarchy violation"
     # When a class is placed incorrectly within the hierarchy, breaking the logical structure.
 
     CARDINALITY_CONSTRAINT = "Cardinality constraint violation"
     # When the number of instances for a class or property exceeds or falls short of the specified cardinality.
-
-    TYPE_MISMATCH = "Type mismatch violation"
-    # When a data type or class type does not match the expected type.
 
     CIRCULAR_DEPENDENCY = "Circular dependency violation"
     # When a class or property is involved in a circular reference, causing an infinite loop.

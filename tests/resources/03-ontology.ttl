@@ -6,7 +6,7 @@
 
 <http://example.com/exOnt>
     a          owl:Ontology ;
-    rdfs:label "An example extra-ontology file."@en .
+    rdfs:label "Example Ontology File."@en .
 
 exOnt:Animal
     a               rdfs:Class ;

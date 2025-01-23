@@ -1,6 +1,6 @@
 # Branch Naming
 
-A git branch should start with a category. Pick one of these: `feature`, `bugfix`, `hotfix`, or `test`.
+A git branch should start with a category. Pick one of these: `feature`, `fix`, or `test`.
 
 - `feature` is for adding, refactoring or removing a feature
 - `fix` is for fixing a bug
