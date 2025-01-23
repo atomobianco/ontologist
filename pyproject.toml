@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "ontologist"
 version = "0.1.0"
-description = "A Python library for validating RDF data alignment with ontologies without requiring SHACL definitions."
+description = "A Python library for validating RDF data alignment with ontologies without requiring shape resources."
 authors = ["Tommaso Bianco <tommaso.bianco@gmail.com>"]
 repository = "https://github.com/atomobianco/ontologist"
 readme = "README.md"

@@ -4,14 +4,14 @@
 [![Build status](https://img.shields.io/github/actions/workflow/status/atomobianco/ontologist/main.yml?branch=main)](https://github.com/atomobianco/ontologist/actions/workflows/main.yml?query=branch%3Amain)
 [![License](https://img.shields.io/github/license/atomobianco/ontologist)](https://img.shields.io/github/license/atomobianco/ontologist)
 
-A Python library for validating RDF data alignment with ontologies without requiring SHACL definitions.
+A Python library for validating RDF data alignment with ontologies without requiring shape resources.
 
 - **Github repository**: <https://github.com/atomobianco/ontologist/>
 
-## Why onto-match?
+## Why?
 
 When working with Large Language Models (LLMs) to extract RDF data based on ontologies, it's crucial to verify that the extracted data aligns correctly with the target ontology.
-While tools like [pySHACL](https://github.com/RDFLib/pySHACL) exist for RDF validation, they may require explicit SHACL shape definitions, or may fail on certain validation checks.
+While tools like [pySHACL](https://github.com/RDFLib/pySHACL) exist for RDF validation, they may require explicit shape definitions, or may fail on certain validation checks.
 
 This library provides a programmatic approach to verify ontology alignment, making it particularly suitable for:
 
@@ -29,7 +29,7 @@ This library provides a programmatic approach to verify ontology alignment, maki
 ## Installation
 
 ```bash
-pip install onto-match
+pip install ontologist
 ```
 
 ## Quick Start
