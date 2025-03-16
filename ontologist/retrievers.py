@@ -74,7 +74,7 @@ def get_object_properties(graph: Graph) -> set[URIRef]:
 def get_object_properties_with_domains(ontology: Graph) -> dict[URIRef, set[URIRef]]:
     object_properties_with_domains: dict[URIRef, set[URIRef]] = {}
     object_properties = get_object_properties(ontology)
-    
+
     # First pass: get direct domains for each property
     for op in object_properties:
         domains = set(ontology.objects(subject=op, predicate=RDFS.domain))
@@ -87,7 +87,7 @@ def get_object_properties_with_domains(ontology: Graph) -> dict[URIRef, set[URIR
             else:
                 domains.update(get_superclasses(d, ontology))
         object_properties_with_domains[op] = {d for d in domains if isinstance(d, URIRef)}
-    
+
     # Second pass: inherit domains from parent properties
     for op in object_properties:
         # If property has no direct domain, check parent properties
@@ -96,14 +96,14 @@ def get_object_properties_with_domains(ontology: Graph) -> dict[URIRef, set[URIR
             for parent in parent_props:
                 if parent in object_properties_with_domains:
                     object_properties_with_domains[op].update(object_properties_with_domains[parent])
-    
+
     return object_properties_with_domains
 
 
 def get_object_properties_with_ranges(ontology: Graph) -> dict[URIRef, set[URIRef]]:
     object_properties_with_ranges: dict[URIRef, set[URIRef]] = {}
     object_properties = get_object_properties(ontology)
-    
+
     # First pass: get direct ranges for each property
     for op in object_properties:
         ranges = set(ontology.objects(subject=op, predicate=RDFS.range))
@@ -116,7 +116,7 @@ def get_object_properties_with_ranges(ontology: Graph) -> dict[URIRef, set[URIRe
             else:
                 ranges.update(get_superclasses(d, ontology))
         object_properties_with_ranges[op] = {r for r in ranges if isinstance(r, URIRef)}
-    
+
     # Second pass: inherit ranges from parent properties
     for op in object_properties:
         # If property has no direct range, check parent properties
@@ -125,7 +125,7 @@ def get_object_properties_with_ranges(ontology: Graph) -> dict[URIRef, set[URIRe
             for parent in parent_props:
                 if parent in object_properties_with_ranges:
                     object_properties_with_ranges[op].update(object_properties_with_ranges[parent])
-    
+
     return object_properties_with_ranges
 
 

@@ -24,9 +24,9 @@ def test_validate_property_type():
     conforms, violations, _ = validate(d, o)
     assert not conforms, "Expected non conformity"
     assert len(violations) == 1, "Expected 1 violation"
-    assert {violation.violation_type for violation in violations} == {
-        ViolationType.PROPERTY_TYPE_VIOLATION
-    }, "Expected only type mismatch violations"
+    assert {violation.violation_type for violation in violations} == {ViolationType.PROPERTY_TYPE_VIOLATION}, (
+        "Expected only type mismatch violations"
+    )
 
 
 def test_validate_undefined_class():
@@ -35,9 +35,9 @@ def test_validate_undefined_class():
     conforms, violations, _ = validate(d, o)
     assert not conforms, "Expected non conformity"
     assert len(violations) == 1, "Expected 1 violation"
-    assert {violation.violation_type for violation in violations} == {
-        ViolationType.UNDEFINED_CLASS
-    }, "Expected only undefined class violations"
+    assert {violation.violation_type for violation in violations} == {ViolationType.UNDEFINED_CLASS}, (
+        "Expected only undefined class violations"
+    )
 
 
 def test_validate_undefined_property():
@@ -46,9 +46,9 @@ def test_validate_undefined_property():
     conforms, violations, _ = validate(d, o)
     assert not conforms, "Expected non conformity"
     assert len(violations) == 2, "Expected 2 violations"
-    assert {violation.violation_type for violation in violations} == {
-        ViolationType.UNDEFINED_PROPERTY
-    }, "Expected only undefined property violations"
+    assert {violation.violation_type for violation in violations} == {ViolationType.UNDEFINED_PROPERTY}, (
+        "Expected only undefined property violations"
+    )
     undefined_props = {v.related_property for v in violations}
     assert undefined_props == {
         "exOnt:nArms",
@@ -113,7 +113,10 @@ def test_validate_against_pyshacl(data_graph_file, ont_graph_file, shape_graph_f
     o = Graph().parse(RESOURCE_DIR / ont_graph_file, format="turtle")
     s = Graph().parse(RESOURCE_DIR / shape_graph_file, format="turtle")
 
-    conforms, _, _ = validate(d, o)
+    conforms, _, report = validate(d, o)
+
+    if not conforms:
+        print(report)
 
     assert conforms == conforms_ours
     assert _validate_with_pyshacl(d, o, s) == conforms_pyshacl
