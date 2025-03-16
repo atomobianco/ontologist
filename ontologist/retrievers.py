@@ -71,31 +71,74 @@ def get_object_properties(graph: Graph) -> set[URIRef]:
     return {prop for prop in object_properties if isinstance(prop, URIRef)}
 
 
+def get_domains_or_ranges(ontology: Graph, property_uri: URIRef, predicate: URIRef) -> set[URIRef]:
+    """
+    Helper function to get domains or ranges for a property and process them.
+    
+    Args:
+        ontology: The ontology graph
+        property_uri: The property to get domains/ranges for
+        predicate: Either RDFS.domain or RDFS.range
+        
+    Returns:
+        Set of processed domain or range URIRefs
+    """
+    values = set(ontology.objects(subject=property_uri, predicate=predicate))
+    result = set()
+    
+    for value in list(values):
+        if isinstance(value, BNode):
+            sub_graph = ontology.cbd(value)
+            linked_values = sub_graph.objects(predicate=RDF.first)
+            result.update(linked_values)
+        else:
+            result.add(value)
+            result.update(get_superclasses(value, ontology))
+    
+    return {v for v in result if isinstance(v, URIRef)}
+
+
+def inherit_from_parent_properties(
+    ontology: Graph, 
+    property_uri: URIRef, 
+    properties_with_values: dict[URIRef, set[URIRef]]
+) -> set[URIRef]:
+    """
+    Inherit domains or ranges from parent properties.
+    
+    Args:
+        ontology: The ontology graph
+        property_uri: The property to find parents for
+        properties_with_values: Dictionary mapping properties to their domains/ranges
+        
+    Returns:
+        Set of inherited domains or ranges
+    """
+    if properties_with_values[property_uri]:
+        return set()
+        
+    inherited_values = set()
+    parent_props = set(ontology.objects(subject=property_uri, predicate=RDFS.subPropertyOf))
+    
+    for parent in parent_props:
+        if parent in properties_with_values:
+            inherited_values.update(properties_with_values[parent])
+            
+    return inherited_values
+
+
 def get_object_properties_with_domains(ontology: Graph) -> dict[URIRef, set[URIRef]]:
     object_properties_with_domains: dict[URIRef, set[URIRef]] = {}
     object_properties = get_object_properties(ontology)
 
     # First pass: get direct domains for each property
     for op in object_properties:
-        domains = set(ontology.objects(subject=op, predicate=RDFS.domain))
-        for d in list(domains):
-            if isinstance(d, BNode):
-                sub_graph = ontology.cbd(d)
-                linked_domains = sub_graph.objects(predicate=RDF.first)
-                domains.remove(d)
-                domains.update(linked_domains)
-            else:
-                domains.update(get_superclasses(d, ontology))
-        object_properties_with_domains[op] = {d for d in domains if isinstance(d, URIRef)}
+        object_properties_with_domains[op] = get_domains_or_ranges(ontology, op, RDFS.domain)
 
     # Second pass: inherit domains from parent properties
     for op in object_properties:
-        # If property has no direct domain, check parent properties
-        if not object_properties_with_domains[op]:
-            parent_props = set(ontology.objects(subject=op, predicate=RDFS.subPropertyOf))
-            for parent in parent_props:
-                if parent in object_properties_with_domains:
-                    object_properties_with_domains[op].update(object_properties_with_domains[parent])
+        inherited_domains = inherit_from_parent_properties(ontology, op, object_properties_with_domains)
+        object_properties_with_domains[op].update(inherited_domains)
 
     return object_properties_with_domains
 
@@ -106,25 +149,12 @@ def get_object_properties_with_ranges(ontology: Graph) -> dict[URIRef, set[URIRe
 
     # First pass: get direct ranges for each property
     for op in object_properties:
-        ranges = set(ontology.objects(subject=op, predicate=RDFS.range))
-        for d in list(ranges):
-            if isinstance(d, BNode):
-                sub_graph = ontology.cbd(d)
-                linked_domains = sub_graph.objects(predicate=RDF.first)
-                ranges.remove(d)
-                ranges.update(linked_domains)
-            else:
-                ranges.update(get_superclasses(d, ontology))
-        object_properties_with_ranges[op] = {r for r in ranges if isinstance(r, URIRef)}
+        object_properties_with_ranges[op] = get_domains_or_ranges(ontology, op, RDFS.range)
 
     # Second pass: inherit ranges from parent properties
     for op in object_properties:
-        # If property has no direct range, check parent properties
-        if not object_properties_with_ranges[op]:
-            parent_props = set(ontology.objects(subject=op, predicate=RDFS.subPropertyOf))
-            for parent in parent_props:
-                if parent in object_properties_with_ranges:
-                    object_properties_with_ranges[op].update(object_properties_with_ranges[parent])
+        inherited_ranges = inherit_from_parent_properties(ontology, op, object_properties_with_ranges)
+        object_properties_with_ranges[op].update(inherited_ranges)
 
     return object_properties_with_ranges
 
