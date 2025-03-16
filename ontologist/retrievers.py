@@ -51,12 +51,12 @@ def get_object_properties(graph: Graph) -> set[URIRef]:
             if isinstance(range_val, URIRef) and not str(range_val).startswith(str(XSD))
         ):
             object_properties.add(prop)
-    
+
     # Add properties that are subproperties of object properties
     subproperties = set()
     for prop in object_properties.copy():  # Use copy to avoid modifying during iteration
         subproperties.update(graph.subjects(predicate=RDFS.subPropertyOf, object=prop))
-    
+
     # Recursively find all subproperties
     while subproperties:
         new_subproperties = set()
