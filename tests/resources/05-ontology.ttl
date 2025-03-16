@@ -30,12 +30,28 @@ exOnt:hasRelationship
 
 exOnt:hasFriend
     a                  rdf:Property ;
-    rdfs:subPropertyOf exOnt:hasRelationship ;
-    rdfs:domain        exOnt:Human ;
-    rdfs:range         exOnt:Human .
+    rdfs:subPropertyOf exOnt:hasRelationship .
 
 exOnt:hasPet
     a                  rdf:Property ;
     rdfs:subPropertyOf exOnt:hasRelationship ;
     rdfs:domain        exOnt:Human ;
     rdfs:range         exOnt:Pet .
+
+exOnt:Teacher
+    a               rdfs:Class ;
+    rdfs:comment    "A Human who is a teacher."@en ;
+    rdfs:subClassOf exOnt:Human .
+
+exOnt:PreschoolTeacher
+    a               rdfs:Class ;
+    rdfs:comment    "A Teacher who teaches preschool."@en ;
+    rdfs:subClassOf exOnt:Teacher .
+
+exOnt:Lizard
+    a               rdfs:Class ;
+    rdfs:subClassOf exOnt:Pet .
+
+exOnt:Goanna
+    a               rdfs:Class ;
+    rdfs:subClassOf exOnt:Lizard .

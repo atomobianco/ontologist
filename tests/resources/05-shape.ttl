@@ -14,12 +14,12 @@ exShape:HumanShape
     a              sh:NodeShape ;
     sh:property    [ sh:class exOnt:Pet ;
                      sh:path  exOnt:hasPet ; ] ;
-    sh:property    [ sh:class exOnt:Human ;
-                     sh:path  exOnt:hasFriend ; ] ;
     sh:targetClass exOnt:Human .
 
 exShape:AnimalShape
     a              sh:NodeShape ;
     sh:property    [ sh:class exOnt:Animal ;
                      sh:path  exOnt:hasRelationship ; ] ;
+    sh:property    [ sh:class exOnt:Animal ;
+                     sh:path  exOnt:hasFriend ; ] ;
     sh:targetClass exOnt:Animal .

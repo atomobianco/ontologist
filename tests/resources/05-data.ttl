@@ -1,0 +1,16 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix exOnt: <http://example.com/exOnt#> .
+@prefix ex:    <http://example.com/ex#> .
+
+ex:Human1
+    rdf:type        exOnt:PreschoolTeacher ;
+    rdf:label       "Amy" ;
+    exOnt:hasFriend ex:Human2 .
+
+ex:Human2
+    rdf:type  exOnt:PreschoolTeacher ;
+    rdf:label "Sebastian" .
+
+ex:Pet1
+    rdf:type exOnt:Goanna .

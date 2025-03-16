@@ -64,7 +64,7 @@ def _validate_with_pyshacl(data_graph: Graph, ont_graph: Graph, shape_graph: Gra
         inference="both",
         debug=True,
     )
-    conforms, report_graph, report_text = results
+    conforms, _, _ = results
     return conforms
 
 
@@ -97,6 +97,13 @@ def _validate_with_pyshacl(data_graph: Graph, ont_graph: Graph, shape_graph: Gra
             "04-ontology.ttl",
             "04-shape.ttl",
             False,
+            True,
+        ),
+        (
+            "05-data.ttl",
+            "05-ontology.ttl",
+            "05-shape.ttl",
+            True,
             True,
         ),
     ],
