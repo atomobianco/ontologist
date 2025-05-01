@@ -3,6 +3,7 @@ from rdflib import Graph
 from .models import (
     Violation,
 )
+from .retrievers import get_subset
 from .validators import (
     validate_object_property_domain,
     validate_object_property_range,
@@ -44,3 +45,33 @@ def validate(data_graph: Graph, ont_graph: Graph) -> tuple[bool, set[Violation],
         report = f"Validation Report\nConforms: False\nResults ({len(violations)}):\n{violations_list}"
 
     return conforms, violations, report
+
+
+def subset(
+    ont_graph: Graph,
+    classes: set[str],
+    depth: int = 0,
+    include_superclasses: bool = True,
+    include_subclasses: bool = True,
+    include_properties: bool = True,
+    include_annotations: bool = True,
+) -> Graph:
+    """
+    Extract a subset of an ontology centered around specified focal classes.
+
+    Args:
+        ont_graph: The source RDF graph containing the full ontology
+        classes: Set of class URIs to use as starting points for extraction
+        depth: How many relationship steps to traverse from focal classes (default: 0)
+        include_properties: Whether to include properties that connect included classes (default: True)
+        include_annotations: Whether to include annotation properties (default: True)
+        include_superclasses: Whether to include parent classes (default: True)
+        include_subclasses: Whether to include child classes (default: True)
+
+    Returns:
+        A new RDF graph containing the extracted ontology subset
+    """
+    subset_graph = get_subset(
+        ont_graph, classes, depth, include_superclasses, include_subclasses, include_properties, include_annotations
+    )
+    return subset_graph
